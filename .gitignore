@@ -1,0 +1,9 @@
+# Ignore Python3 compiled files
+*.pyc
+__pycache__/
+
+# Ignore macOS system files
+.DS_Store
+
+# Ignore Python3 virtual environment
+venv/
