@@ -66,13 +66,16 @@ def get_sse_bond_feedback(audit_id):
 # get bond and its feedback
 def get_bond_and_feedback():
     result = []
+    feedback = []
     list = get_sse_bond_list()
     if list is None:
         return
     for bond in list:
         audit_id = bond["BOND_NUM"]
-        feedback = get_sse_bond_feedback(audit_id)
         reference_files = get_sse_bond_reference(audit_id)
+        # number can compare with number string?
+        if int(bond["AUDIT_STATUS"]) > 1:
+            feedback = get_sse_bond_feedback(audit_id)
 
         result.append(
             {

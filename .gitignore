@@ -7,3 +7,6 @@ __pycache__/
 
 # Ignore Python3 virtual environment
 venv/
+
+# Ignore configuration files
+config.yaml
