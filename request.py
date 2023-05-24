@@ -93,4 +93,4 @@ def get_bond_and_feedback():
         f.write(json.dumps(result, indent=4, ensure_ascii=False))
 
 
-get_bond_and_feedback()
+# get_bond_and_feedback()

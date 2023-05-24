@@ -11,7 +11,7 @@ except:
 
 
 def config(*keys):
-    def safeget(dct, *keys):
+    def safe_get(dct, *keys):
         for key in keys:
             try:
                 dct = dct[key]
@@ -19,4 +19,4 @@ def config(*keys):
                 return None
         return dct
 
-    return safeget(_config, *keys)
+    return safe_get(_config, *keys)
