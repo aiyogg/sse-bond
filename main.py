@@ -1,11 +1,19 @@
+import logging
+import sys
 from db import init, store_bond
 from request import get_sse_bond_list
-import logging
+from logger import configure_logging
 
-logging.getLogger("main").setLevel(logging.DEBUG)
+# set up logging
+logging.basicConfig(level=logging.DEBUG)
+console_handler = logging.StreamHandler(sys.stdout)
+console_handler.setLevel(logging.DEBUG)
+logging.getLogger().addHandler(console_handler)
 
 
 def main():
+    # configure logging
+    configure_logging()
     # init db
     init()
     # get bond list

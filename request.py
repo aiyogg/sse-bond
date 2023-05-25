@@ -5,8 +5,6 @@ import json
 import re
 import logging
 
-logging.getLogger("requests").setLevel(logging.DEBUG)
-
 
 # common request func
 def doRequest(headers, params):
