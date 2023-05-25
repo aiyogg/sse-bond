@@ -2,23 +2,29 @@
 
 import requests
 import json
+import re
+import logging
+
+logging.getLogger("requests").setLevel(logging.DEBUG)
 
 
 # common request func
 def doRequest(headers, params):
     url = "http://query.sse.com.cn/commonQuery.do"
     params["jsonCallBack"] = "jsonpCallback666"
-    response = requests.get(url, headers=headers, params=params)
+    with requests.Session() as session:
+        response = session.get(url, headers=headers, params=params)
     response.encoding = "utf-8"
     # deal with jsonp response
     data = response.text
-    data = data.replace("jsonpCallback666(", "")
-    data = data.replace(")", "")
+    # remove jsonp callback
+    data = re.sub(r"^jsonpCallback666\(|\)$", "", data)
+
     # to json
     data = json.loads(data)
     # get `result` from dict object
     if data["result"] is None:
-        print("no result")
+        logging.debug("no result")
         return
     data = data["result"]
     # printf data as json format

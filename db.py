@@ -33,7 +33,7 @@ class Bond(BaseModel):
         table_name = "sse_bond"
 
 
-def create_bond(bond):
+def store_bond(bond):
     Bond.create(
         audit_name=bond["AUDIT_NAME"],
         bond_num=bond["BOND_NUM"],
