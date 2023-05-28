@@ -1,28 +1,29 @@
 import logging
-import sys
 from db import init, store_bond
-from request import get_sse_bond_list
-from logger import configure_logging
+from request import get_sse_bond_list, get_sse_bond_feedback
+from logger import Logger
+from config import SSE_BOND_STATIC_URL
+from read_remote_pdf import read_remote_pdf
 
-# set up logging
-logging.basicConfig(level=logging.DEBUG)
-console_handler = logging.StreamHandler(sys.stdout)
-console_handler.setLevel(logging.DEBUG)
-logging.getLogger().addHandler(console_handler)
+logger = Logger("error.main.log")
 
 
 def main():
-    # configure logging
-    configure_logging()
     # init db
     init()
+
+    refs = get_sse_bond_feedback("23829")
+    if refs is not None and len(refs) > 0:
+        pdf_url = SSE_BOND_STATIC_URL + refs[1]["FILE_PATH"]
+        logger.log_info(pdf_url)
+        read_remote_pdf(pdf_url)
     # get bond list
-    bonds = get_sse_bond_list()
-    if bonds is not None:
-        # store bond list
-        for bond in bonds:
-            logging.debug(bond)
-            store_bond(bond)
+    # bonds = get_sse_bond_list()
+    # if bonds is not None:
+    #     # store bond list
+    #     logging.debug(len(bonds))
+    # for bond in bonds:
+    # store_bond(bond)
 
 
 if __name__ == "__main__":

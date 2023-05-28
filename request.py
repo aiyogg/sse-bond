@@ -3,7 +3,9 @@
 import requests
 import json
 import re
-import logging
+from logger import Logger
+
+logger = Logger("error.request.log")
 
 
 # common request func
@@ -22,11 +24,9 @@ def doRequest(headers, params):
     data = json.loads(data)
     # get `result` from dict object
     if data["result"] is None:
-        logging.debug("no result")
+        logger.log_error("no result")
         return
     data = data["result"]
-    # printf data as json format
-    # print(json.dumps(data, indent=4, ensure_ascii=False))
     return data
 
 
@@ -36,6 +36,7 @@ def get_sse_bond_list():
     # set request params
     params = {
         "isPagination": "true",
+        # "isPagination": "false",
         "pageHelp.pageSize": "1",
         "bond_type": "0",
         # 'status': '2',
