@@ -10,3 +10,6 @@ venv/
 
 # Ignore configuration files
 config.yaml
+
+# Ignore template file
+temp.*
