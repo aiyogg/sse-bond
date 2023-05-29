@@ -5,7 +5,7 @@ import json
 import re
 from logger import Logger
 
-logger = Logger("error.request.log")
+logger = Logger("error.log")
 
 
 # common request func
