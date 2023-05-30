@@ -15,8 +15,12 @@ class Logger:
         console_handler.setFormatter(formatter)
         self.logger.addHandler(console_handler)
 
-    def log_error(self, message):
-        self.logger.error(message)
+    def log_error(self, message, exception=None):
+        self.logger.exception(message, exc_info=exception)
 
     def log_info(self, message):
         self.logger.info(message)
+
+
+# export logger
+logger = Logger("error.log")

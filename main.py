@@ -1,11 +1,8 @@
-import logging
 from db import init, store_bond
 from request import get_sse_bond_list, get_sse_bond_feedback
-from logger import Logger
+from logger import logger
 from config import SSE_BOND_STATIC_URL
 from read_remote_pdf import read_remote_pdf
-
-logger = Logger("error.log")
 
 
 def main():
@@ -17,7 +14,8 @@ def main():
     if refs is not None and len(refs) > 0:
         pdf_url = SSE_BOND_STATIC_URL + refs[0]["FILE_PATH"]
         logger.log_info(pdf_url)
-        read_remote_pdf(pdf_url)
+        pdf_text = read_remote_pdf(pdf_url)
+        logger.log_info(pdf_text)
     # get bond list
     # bonds = get_sse_bond_list()
     # if bonds is not None:

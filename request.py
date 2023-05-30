@@ -3,9 +3,7 @@
 import requests
 import json
 import re
-from logger import Logger
-
-logger = Logger("error.log")
+from logger import logger
 
 
 # common request func
