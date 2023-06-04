@@ -10,7 +10,7 @@ from pypdf import PdfReader
 def read_remote_pdf(pdf_url):
     try:
         response = requests.get(pdf_url)
-        logger.log_info(response.status_code)
+        logger.log_info(f"read_remote_pdf: {response.status_code}")
         with open("temp.pdf", "wb") as file:
             file.write(response.content)
         pdf_file = open("temp.pdf", "rb")
@@ -27,4 +27,6 @@ def read_remote_pdf(pdf_url):
     pdf_file.close()
 
     text_body = re.sub(r"\n|-\s?\d+\s?-", " ", text_body)
+    # avoid NUL char
+    text_body = text_body.replace("\x00", "")
     return text_body
