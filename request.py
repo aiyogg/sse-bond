@@ -3,7 +3,7 @@ import json
 import re
 from logger import logger
 from db import store_bond, store_bond_feedback
-from read_remote_pdf import read_remote_pdf
+from read_remote_document import read_remote_document
 from config import SSE_BOND_STATIC_URL
 
 
@@ -87,6 +87,7 @@ def get_bond_and_store():
                 bond["PROSPECTUS_FILE_PATH"] = rfs[0]["FILE_PATH"]
                 bond["PROSPECTUS_FILE_VERSION"] = rfs[0]["FILE_VERSION"]
             if store_bond(bond):
+                logger.log_info("已存在，无更新!")
                 continue
             fbs = get_sse_bond_feedback(bond["BOND_NUM"])
             if fbs is not None and len(fbs) > 0:
@@ -95,7 +96,7 @@ def get_bond_and_store():
                         f"反馈意见及回复: %s {fb['FILE_TITLE']}",
                     )
                     pdf_url = SSE_BOND_STATIC_URL + fb["FILE_PATH"]
-                    pdf_text = read_remote_pdf(pdf_url)
+                    pdf_text = read_remote_document(pdf_url)
                     logger.log_info(len(pdf_text))
                     fb["BOND_NUM"] = bond["BOND_NUM"]
                     fb["FILE_CONTENT"] = pdf_text

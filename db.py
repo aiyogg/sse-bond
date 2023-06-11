@@ -1,6 +1,8 @@
+import datetime
 from peewee import *
 from config import config
 from logger import logger
+
 
 database = PostgresqlDatabase(None)
 
@@ -8,9 +10,11 @@ database = PostgresqlDatabase(None)
 class BaseModel(Model):
     class Meta:
         database = database
+        timezone = "Asia/Shanghai"
 
 
 class Bond(BaseModel):
+    modified_at = DateTimeField(default=datetime.datetime.now)
     audit_name = CharField(null=True)
     bond_num = CharField(null=True)
     bond_type = SmallIntegerField(null=True)
@@ -31,7 +35,7 @@ class Bond(BaseModel):
     seq = CharField(null=True)
     prospectus_file = CharField(null=True)
     prospectus_file_path = CharField(null=True)
-    prospectus_date = CharField(null=True)
+    prospectus_file_version = CharField(null=True)
 
     class Meta:
         table_name = "sse_bond"
@@ -52,8 +56,9 @@ class BondFeedback(BaseModel):
 
 
 def store_bond(bond):
+    stored_bond = Bond.select().where(Bond.bond_num == bond["BOND_NUM"])
     # create if not exists
-    if not Bond.select().where(Bond.bond_num == bond["BOND_NUM"]).exists():
+    if not stored_bond.exists():
         Bond.create(
             audit_name=bond["AUDIT_NAME"],
             bond_num=bond["BOND_NUM"],
@@ -77,10 +82,34 @@ def store_bond(bond):
             prospectus_file_path=bond["PROSPECTUS_FILE_PATH"],
             prospectus_file_version=bond["PROSPECTUS_FILE_VERSION"],
         )
-        return False
-    else:
-        logger.log_info(f"bond already exists: {bond['BOND_NUM']}")
+    # content is the same, skip
+    elif stored_bond.get().seq == bond["SEQ"]:
         return True
+    else:
+        Bond.update(
+            modified_at=datetime.datetime.now(),
+            audit_name=bond["AUDIT_NAME"],
+            bond_num=bond["BOND_NUM"],
+            bond_type=int(bond["BOND_TYPE"]),
+            area=bond["AREA"],
+            company_name=bond["LIST1"],
+            company_code=bond["LIST11"],
+            plan_issue_amount=float(bond["PLAN_ISSUE_AMOUNT"]),
+            underwriter_name=bond["LIST2"],
+            underwriter_short_name=bond["SHORT_NAME"],
+            underwriter_code=bond["LIST22"],
+            audit_status=bond["AUDIT_STATUS"],
+            audit_sub_status=bond["AUDIT_SUB_STATUS"],
+            accept_date=bond["ACCEPT_DATE"],
+            csrc_code=bond["CSRC_CODE"],
+            reits_type=bond["REITS_TYPE"],
+            sec_name=bond["SEC_NAME"],
+            publish_date=bond["PUBLISH_DATE"],
+            seq=bond["SEQ"],
+            prospectus_file=bond["PROSPECTUS_FILE"],
+            prospectus_file_path=bond["PROSPECTUS_FILE_PATH"],
+            prospectus_file_version=bond["PROSPECTUS_FILE_VERSION"],
+        ).where(Bond.bond_num == bond["BOND_NUM"]).execute()
 
 
 def store_bond_feedback(bond_feedback):
