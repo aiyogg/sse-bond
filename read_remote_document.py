@@ -1,10 +1,7 @@
 import re
 import requests
-import io
-import magic
-import PyPDF2
-import docx
 import tempfile
+import textract
 from logger import logger
 
 
@@ -16,25 +13,21 @@ def read_remote_document(url):
                 f"read_remote_document - Get failed: {response.status_code}"
             )
             return
-        file_type = magic.from_buffer(response.content, mime=True)
-        logger.log_info(f"file_type: {file_type}")
-        if file_type == "application/pdf":
-            pdf_reader = PyPDF2.PdfReader(io.BytesIO(response.content))
-            page_count = len(pdf_reader.pages)
-            text_body = ""
-            for page in range(page_count):
-                text_body += pdf_reader.pages[page].extract_text()
-        elif file_type == "application/msword":
-            with tempfile.NamedTemporaryFile(suffix=".docx", delete=False) as f:
-                f.write(response.content)
-                doc = docx.Document(f.name)
-                text_body = "\n".join([para.text for para in doc.paragraphs])
+
+        file_suffix = url.split(".")[-1]
+        with tempfile.NamedTemporaryFile(suffix=file_suffix) as temp:
+            logger.log_info(f"document URL: {url}")
+            temp.write(response.content)
+            temp.seek(0)
+            text_body = textract.process(temp.name, extension=file_suffix).decode(
+                "utf-8"
+            )
 
     except Exception as e:
-        # logger.log_error("read_remote_document Exception:", e)
+        logger.log_info("WARN: read_remote_document Exception:", e)
         return ""
 
-    text_body = re.sub(r"\n|-\s?\d+\s?-", " ", text_body)
+    text_body = re.sub(r"\n|-\s?\d+\s?-", "", text_body)
     # avoid NUL char
     text_body = text_body.replace("\x00", "")
     logger.log_info(f"text_body length: {len(text_body)}")
@@ -42,9 +35,8 @@ def read_remote_document(url):
 
 
 # def main():
-#     # url = "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf"
-#     # test docx
-#     url = "http://static.sse.com.cn/bond/bridge/information/c/201606/49c5eefa735645699e367dc3c5a1424f.pdf"
+#     # url = "http://static.sse.com.cn/bond/bridge/information/c/201803/d911f3949fdc42aca1cb5f625a8e7736.pdf"
+#     url = "http://static.sse.com.cn/bond/bridge/information/c/201712/ccc538277f404e2e9e66ad26ab1d068e.doc"
 #     text_body = read_remote_document(url)
 #     print(text_body)
 
