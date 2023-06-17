@@ -24,7 +24,7 @@ def read_remote_document(url):
             )
 
     except Exception as e:
-        logger.log_info("WARN: read_remote_document Exception:", e)
+        logger.log_warn(f"read_remote_document Exception: {e}")
         return ""
 
     text_body = re.sub(r"\n|-\s?\d+\s?-", "", text_body)
