@@ -112,6 +112,20 @@ def store_bond(bond):
         ).where(Bond.bond_num == bond["BOND_NUM"]).execute()
 
 
+# get last 7 days bond list
+def get_last_7days_bonds():
+    return (
+        Bond.select()
+        # .where(Bond.publish_date == "2023-06-15")
+        .where(
+            Bond.publish_date
+            >= (datetime.datetime.now() - datetime.timedelta(days=7)).strftime(
+                "%Y-%m-%d"
+            )
+        )
+    )
+
+
 def store_bond_feedback(bond_feedback):
     BondFeedback.create(
         bond_num=bond_feedback["BOND_NUM"],

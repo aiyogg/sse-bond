@@ -1,6 +1,7 @@
 import requests
 import json
 import re
+import time
 from logger import logger
 from db import store_bond, store_bond_feedback
 from read_remote_document import read_remote_document
@@ -30,18 +31,19 @@ def doRequest(headers, params):
     return data
 
 
-def get_sse_bond_list():
+def get_sse_bond_list(all=False):
     # set referer header
     headers = {"Referer": "http://bond.sse.com.cn/"}
     # set request params
     params = {
-        "isPagination": "false",
-        # "isPagination": "true",
+        "isPagination": "true",
         "bond_type": "0",
         "sqlId": "COMMON_SSE_ZCZZQXMLB",
-        # "status": "2",
-        # "pageHelp.pageSize": "1",
+        "pageHelp.pageSize": "1",
     }
+    if all:
+        params["isPagination"] = "false"
+        del params["pageHelp.pageSize"]
     return doRequest(headers, params)
 
 
@@ -69,31 +71,35 @@ def get_sse_bond_feedback(audit_id):
 
 
 def get_bond_and_store():
+    logger.log_info(
+        f"🚀 Start to get bond list at {time.strftime('%Y-%m-%d %H:%M:%S', time.localtime())}"
+    )
     # get bond list
     bonds = get_sse_bond_list()
+    logger.log_info(f"✅ Total bonds: {len(bonds)}")
     if bonds is not None:
         # store bond list
         for bond in bonds:
             logger.log_info(
-                f"债券名称: %s {bond['AUDIT_NAME']}",
+                f"Bond name: {bond['AUDIT_NAME']}",
             )
             rfs = get_sse_bond_reference(bond["BOND_NUM"])
             if rfs is not None and len(rfs) > 0:
                 logger.log_info(
-                    f"募集说明书: %s {rfs[0]['FILE_TITLE']}",
+                    f"Bond prospectus: {rfs[0]['FILE_TITLE']}",
                 )
                 # assign field to bond
                 bond["PROSPECTUS_FILE"] = rfs[0]["FILE_TITLE"]
                 bond["PROSPECTUS_FILE_PATH"] = rfs[0]["FILE_PATH"]
                 bond["PROSPECTUS_FILE_VERSION"] = rfs[0]["FILE_VERSION"]
             if store_bond(bond):
-                logger.log_info("已存在，无更新!")
+                logger.log_info("It's already in db")
                 continue
             fbs = get_sse_bond_feedback(bond["BOND_NUM"])
             if fbs is not None and len(fbs) > 0:
                 for fb in fbs:
                     logger.log_info(
-                        f"反馈意见及回复: %s {fb['FILE_TITLE']}",
+                        f"bond feedback: {fb['FILE_TITLE']}",
                     )
                     pdf_url = SSE_BOND_STATIC_URL + fb["FILE_PATH"]
                     pdf_text = read_remote_document(pdf_url)
