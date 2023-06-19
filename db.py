@@ -56,60 +56,35 @@ class BondFeedback(BaseModel):
 
 
 def store_bond(bond):
-    stored_bond = Bond.select().where(Bond.bond_num == bond["BOND_NUM"])
-    # create if not exists
-    if not stored_bond.exists():
-        Bond.create(
-            audit_name=bond["AUDIT_NAME"],
-            bond_num=bond["BOND_NUM"],
-            bond_type=int(bond["BOND_TYPE"]),
-            area=bond["AREA"],
-            company_name=bond["LIST1"],
-            company_code=bond["LIST11"],
-            plan_issue_amount=float(bond["PLAN_ISSUE_AMOUNT"]),
-            underwriter_name=bond["LIST2"],
-            underwriter_short_name=bond["SHORT_NAME"],
-            underwriter_code=bond["LIST22"],
-            audit_status=bond["AUDIT_STATUS"],
-            audit_sub_status=bond["AUDIT_SUB_STATUS"],
-            accept_date=bond["ACCEPT_DATE"],
-            csrc_code=bond["CSRC_CODE"],
-            reits_type=bond["REITS_TYPE"],
-            sec_name=bond["SEC_NAME"],
-            publish_date=bond["PUBLISH_DATE"],
-            seq=bond["SEQ"],
-            prospectus_file=bond["PROSPECTUS_FILE"],
-            prospectus_file_path=bond["PROSPECTUS_FILE_PATH"],
-            prospectus_file_version=bond["PROSPECTUS_FILE_VERSION"],
-        )
-    # content is the same, skip
-    elif stored_bond.get().seq == bond["SEQ"]:
+    bond_num = bond["BOND_NUM"]
+    defaults = {
+        "audit_name": bond["AUDIT_NAME"],
+        "bond_type": int(bond["BOND_TYPE"]),
+        "area": bond["AREA"],
+        "company_name": bond["LIST1"],
+        "company_code": bond["LIST11"],
+        "plan_issue_amount": float(bond["PLAN_ISSUE_AMOUNT"]),
+        "underwriter_name": bond["LIST2"],
+        "underwriter_short_name": bond["SHORT_NAME"],
+        "underwriter_code": bond["LIST22"],
+        "audit_status": bond["AUDIT_STATUS"],
+        "audit_sub_status": bond["AUDIT_SUB_STATUS"],
+        "accept_date": bond["ACCEPT_DATE"],
+        "csrc_code": bond["CSRC_CODE"],
+        "reits_type": bond["REITS_TYPE"],
+        "sec_name": bond["SEC_NAME"],
+        "publish_date": bond["PUBLISH_DATE"],
+        "seq": bond["SEQ"],
+        "prospectus_file": bond["PROSPECTUS_FILE"],
+        "prospectus_file_path": bond["PROSPECTUS_FILE_PATH"],
+        "prospectus_file_version": bond["PROSPECTUS_FILE_VERSION"],
+    }
+    stored_bond, created = Bond.get_or_create(bond_num=bond_num, defaults=defaults)
+    if not created and stored_bond.seq == bond["SEQ"]:
         return True
-    else:
-        Bond.update(
-            modified_at=datetime.datetime.now(),
-            audit_name=bond["AUDIT_NAME"],
-            bond_num=bond["BOND_NUM"],
-            bond_type=int(bond["BOND_TYPE"]),
-            area=bond["AREA"],
-            company_name=bond["LIST1"],
-            company_code=bond["LIST11"],
-            plan_issue_amount=float(bond["PLAN_ISSUE_AMOUNT"]),
-            underwriter_name=bond["LIST2"],
-            underwriter_short_name=bond["SHORT_NAME"],
-            underwriter_code=bond["LIST22"],
-            audit_status=bond["AUDIT_STATUS"],
-            audit_sub_status=bond["AUDIT_SUB_STATUS"],
-            accept_date=bond["ACCEPT_DATE"],
-            csrc_code=bond["CSRC_CODE"],
-            reits_type=bond["REITS_TYPE"],
-            sec_name=bond["SEC_NAME"],
-            publish_date=bond["PUBLISH_DATE"],
-            seq=bond["SEQ"],
-            prospectus_file=bond["PROSPECTUS_FILE"],
-            prospectus_file_path=bond["PROSPECTUS_FILE_PATH"],
-            prospectus_file_version=bond["PROSPECTUS_FILE_VERSION"],
-        ).where(Bond.bond_num == bond["BOND_NUM"]).execute()
+    Bond.update(modified_at=datetime.datetime.now(), **defaults).where(
+        Bond.bond_num == bond_num
+    ).execute()
 
 
 # get last 7 days bond list
