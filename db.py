@@ -1,4 +1,5 @@
 import datetime
+from typing import Literal
 from peewee import *
 from config import config
 from logger import logger
@@ -55,7 +56,7 @@ class BondFeedback(BaseModel):
         table_name = "sse_bond_feedback"
 
 
-def store_bond(bond):
+def store_bond(bond) -> Literal["created", "updated", "skip"]:
     bond_num = bond["BOND_NUM"]
     defaults = {
         "audit_name": bond["AUDIT_NAME"],
@@ -80,11 +81,14 @@ def store_bond(bond):
         "prospectus_file_version": bond["PROSPECTUS_FILE_VERSION"],
     }
     stored_bond, created = Bond.get_or_create(bond_num=bond_num, defaults=defaults)
-    if not created and stored_bond.seq == bond["SEQ"]:
-        return True
+    if created:
+        return "created"
+    if stored_bond.seq == bond["SEQ"]:
+        return "skip"
     Bond.update(modified_at=datetime.datetime.now(), **defaults).where(
         Bond.bond_num == bond_num
     ).execute()
+    return "updated"
 
 
 # get last 7 days bond list
@@ -101,17 +105,29 @@ def get_last_7days_bonds():
     )
 
 
-def store_bond_feedback(bond_feedback):
-    BondFeedback.create(
+def store_bond_feedback(bond_feedback) -> Literal["created", "updated"]:
+    defaults = {
+        "type": bond_feedback["TYPE"],
+        "file_path": bond_feedback["FILE_PATH"],
+        "file_title": bond_feedback["FILE_TITLE"],
+        "file_content": bond_feedback["FILE_CONTENT"],
+        "ai_summary": bond_feedback["AI_SUMMARY"],
+    }
+    stored_bond_feedback, created = BondFeedback.get_or_create(
         bond_num=bond_feedback["BOND_NUM"],
         advice_id=bond_feedback["ADVICE_ID"],
-        type=bond_feedback["TYPE"],
         upd_time=bond_feedback["UPD_TIME"],
-        file_path=bond_feedback["FILE_PATH"],
-        file_title=bond_feedback["FILE_TITLE"],
-        file_content=bond_feedback["FILE_CONTENT"],
-        ai_summary=bond_feedback["AI_SUMMARY"],
+        defaults=defaults,
     )
+    if created:
+        return "created"
+    else:
+        BondFeedback.update(**defaults).where(
+            BondFeedback.bond_num == bond_feedback["BOND_NUM"],
+            BondFeedback.advice_id == bond_feedback["ADVICE_ID"],
+            BondFeedback.upd_time == bond_feedback["UPD_TIME"],
+        ).execute()
+    return "updated"
 
 
 def init():
