@@ -102,6 +102,11 @@ def get_last_7days_bonds():
                 "%Y-%m-%d"
             )
         )
+        # .join(
+        #     BondFeedback,
+        #     JOIN.LEFT_OUTER,
+        #     on=((Bond.bond_num == BondFeedback.bond_num)),
+        # )
     )
 
 

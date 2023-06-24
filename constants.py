@@ -5,6 +5,22 @@ bond_type_map = {
     3: "大公募",
 }
 
+
+audit_status_map = {
+    "0": "已申报",
+    "1": "已受理",
+    "2": "已反馈",
+    "3": "已接收反馈意见",
+    "4": "通过",
+    "5": "未通过",
+    "8": "终止",
+    "9": "中止",
+    "10": "已回复交易所意见",
+    "11": "提交注册",
+    "12": "注册生效",
+}
+
+
 bond_field_name_map = {
     "bond_num": "债券ID",
     "audit_name": "债券名称",
@@ -46,6 +62,9 @@ email_style = """\
         border-radius: 5px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
+    .text-center {
+        text-align: center;
+    }
     .emphasize {
         font-weight: bold;
         font-size: 18px;
@@ -58,5 +77,21 @@ email_style = """\
     }
     .warning {
         color: orange;
+    }
+    table {
+        border-collapse: collapse;
+        border: 1px solid rgb(200, 200, 200);
+        letter-spacing: 1px;
+        font-family: sans-serif;
+        font-size: 0.8rem;
+    }
+    td,
+    th {
+        border: 1px solid rgb(190, 190, 190);
+        padding: 10px;
+        text-align: center;
+    }
+    tr:nth-child(even) {
+        background-color: #eee;
     }
 """

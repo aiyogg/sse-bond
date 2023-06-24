@@ -41,7 +41,7 @@ def get_sse_bond_list(all=False):
         "isPagination": "true",
         "bond_type": "0",
         "sqlId": "COMMON_SSE_ZCZZQXMLB",
-        "pageHelp.pageSize": "1",
+        "pageHelp.pageSize": "10",
     }
     if all:
         params["isPagination"] = "false"
