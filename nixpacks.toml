@@ -3,12 +3,10 @@ providers = ['...', 'python']
 [phases.setup]
     # Install dependencies
     script = '''
-        python3 -m venv venv
-        source venv/bin/activate
         pip install -r requirements.txt
     '''
 
 [phases.install]
 
 [start]
-cmd = "python3 -m venv venv && source venv/bin/activate && python3 main.py"
+cmd = "python3 main.py"
