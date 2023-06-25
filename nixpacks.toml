@@ -1,12 +1,6 @@
-providers = ['...', 'python']
-
 [phases.setup]
-    # Install dependencies
-    script = '''
-        pip install -r requirements.txt
-    '''
-
+nixPkgs = ['python311']
 [phases.install]
-
+cmds = ['python -m venv /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt']
 [start]
-cmd = "python3 main.py"
+cmd = "python ./main.py"
