@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import time
 import schedule
 from db import init, get_last_7days_bonds
