@@ -1,10 +1,8 @@
 """
-get config from config.yaml
+get config from config.yaml or environment variables
 """
+import os
 import yaml
-
-# href="//static.sse.com.cn/bond/bridge/information/c/202303/917b7ac761c64019b7fdd867481bb461.pdf"
-SSE_BOND_STATIC_URL = "http://static.sse.com.cn/bond"
 
 try:
     with open("config.yaml") as f:
@@ -22,4 +20,8 @@ def config(*keys):
                 return None
         return dct
 
-    return safe_get(_config, *keys)
+    value = safe_get(_config, *keys)
+    if value is not None:
+        return value
+    else:
+        return os.environ.get("_".join(keys).upper())
