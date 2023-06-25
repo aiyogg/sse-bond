@@ -5,7 +5,7 @@ from logger import logger
 from request import get_bond_and_store
 from constants import bond_field_name_map, audit_status_map
 from send_email import send_email
-from constants import email_style
+from constants import email_style, SSE_BOND_DETAIL_URL
 
 
 def weekly_report():
@@ -33,7 +33,7 @@ def weekly_report():
         for field in pick_fields:
             td_content = ""
             if field == "audit_name":
-                td_content = f'<a href="http://bond.sse.com.cn/bridge/information/index_detail.shtml?bound_id={getattr(bond, "bond_num")}" target="_blank">{getattr(bond, field)}</a>'
+                td_content = f'<a href="{SSE_BOND_DETAIL_URL}{getattr(bond, "bond_num")}" target="_blank">{getattr(bond, field)}</a>'
             elif field == "audit_status":
                 td_content = f"{audit_status_map[getattr(bond, field)]}"
             else:

@@ -1,3 +1,11 @@
+# href="//static.sse.com.cn/bond/bridge/information/c/202303/917b7ac761c64019b7fdd867481bb461.pdf"
+SSE_BOND_STATIC_URL = "http://static.sse.com.cn/bond"
+# bond detail web page url
+SSE_BOND_DETAIL_URL = (
+    "http://bond.sse.com.cn/bridge/information/index_detail.shtml?bound_id="
+)
+
+
 bond_type_map = {
     0: "小公募",
     1: "私募",

@@ -5,7 +5,7 @@ import time
 from logger import logger
 from db import store_bond, store_bond_feedback
 from read_remote_document import read_remote_document
-from config import SSE_BOND_STATIC_URL
+from constants import SSE_BOND_STATIC_URL
 from send_email import send_email
 from constants import email_style
 
@@ -128,7 +128,6 @@ def get_bond_and_store():
 
     send_email(
         subject="Today's SSE Bond Statistics",
-        # body=f"Created bond: {created_bond_count}\nUpdated bond: {updated_bond_count}\nCreated feedback: {created_fb_count}\nUpdated feedback: {updated_fb_count}",
         body=f"""\
                 <html>
                 <style>
