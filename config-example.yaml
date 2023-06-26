@@ -4,3 +4,11 @@ db:
   user: postgres
   password: postgres
   database: test
+smtp:
+  host: smtp.example.com
+  port: 587
+  user: someone@example.com
+  password: p@ssW0rd
+report:
+  daily: Expert <expert@example.com>, Assistant <assistant@example.com>
+  weekly: Expert <expert@example.com>, Assistant <sssistant@example.com>

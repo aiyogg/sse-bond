@@ -1,3 +1,6 @@
+providers = ["...", "timezone"]
+[variables]
+TZ = "Asia/Shanghai"
 [phases.setup]
 nixPkgs = ['python311']
 [phases.install]

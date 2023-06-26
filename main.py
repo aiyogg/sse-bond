@@ -7,6 +7,7 @@ from request import get_bond_and_store
 from constants import bond_field_name_map, audit_status_map
 from send_email import send_email
 from constants import email_style, SSE_BOND_DETAIL_URL
+from config import config
 
 
 def weekly_report():
@@ -59,7 +60,7 @@ def weekly_report():
             </body>
             </html>
         """,
-        to_addr=["tengchenc@gmail.com"],
+        to_addr=config("report", "weekly"),
     )
 
 

@@ -8,6 +8,7 @@ from read_remote_document import read_remote_document
 from constants import SSE_BOND_STATIC_URL
 from send_email import send_email
 from constants import email_style
+from config import config
 
 
 # common request func
@@ -144,5 +145,5 @@ def get_bond_and_store():
                 </body>
                 </html>
             """,
-        to_addr="dota2mm@163.com",
+        to_addr=config("report", "daily"),
     )
