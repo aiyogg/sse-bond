@@ -74,8 +74,8 @@ def main():
 if __name__ == "__main__":
     main()
 
-schedule.every().day.at("20:30").do(get_bond_and_store)
-schedule.every().friday.at("20:30").do(weekly_report)
+schedule.every().day.at("20:30", "Asia/Shanghai").do(get_bond_and_store)
+schedule.every().friday.at("20:30", "Asia/Shanghai").do(weekly_report)
 
 while True:
     schedule.run_pending()
