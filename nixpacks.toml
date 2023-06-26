@@ -1,4 +1,3 @@
-providers = ["...", "timezone"]
 [variables]
 TZ = "Asia/Shanghai"
 [phases.setup]
